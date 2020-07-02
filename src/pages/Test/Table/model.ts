@@ -1,6 +1,6 @@
 import { AnyAction, Reducer } from 'redux';
 import { EffectsCommandMap } from 'dva';
-import { addMovie, queryPersonnel, removeMovie } from './service';
+import { addMovie, queryPersonnel, removeMovie, updateMovie } from './service';
 
 import { PersonnelListData } from './data2.d';
 
