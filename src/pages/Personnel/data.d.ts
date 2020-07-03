@@ -1,16 +1,28 @@
 export interface TableListItem {
-  key: number;
-  disabled?: boolean;
-  href: string;
-  avatar: string;
-  name: string;
-  owner: string;
-  desc: string;
-  callNo: number;
-  status: number;
-  updatedAt: Date;
-  createdAt: Date;
-  progress: number;
+  personPhoto: [
+    {
+      picUri: string,
+      serverIndexCode: string
+    }
+  ],
+  personId: string,
+  personName: string,
+  gender: number,
+  orgPath: string,
+  orgPathName: string,
+  orgIndexCode: string,
+  orgName: string,
+  certificateType: number,
+  certificateNo: string,
+  updateTime: string,
+  birthday: string,
+  phoneNo: string,
+  address: string,
+  email: string,
+  education: number,
+  nation: number,
+  jobNo: string,
+  actualPhotoUrl: string
 }
 
 export interface TableListPagination {
@@ -32,4 +44,14 @@ export interface TableListParams {
   key?: number;
   pageSize?: number;
   currentPage?: number;
+}
+
+export interface OrganizationDataItem {
+  orgIndexCode: string;
+  orgNo: string;
+  orgName: string;
+  orgPath: string;
+  parentOrgIndexCode: string;
+  parentOrgName: string;
+  updateTime: string;
 }

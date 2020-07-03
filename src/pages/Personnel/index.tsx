@@ -1,5 +1,5 @@
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Divider, Dropdown, Menu, message, Input } from 'antd';
+import { Button, Divider, Dropdown, Menu, message, Input, Table } from 'antd';
 import React, { useState, useRef, useEffect } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
@@ -8,22 +8,8 @@ import { Link, useIntl, ConnectProps, connect } from 'umi';
 import { ConnectState } from '@/models/connect';
 
 import CreateForm from './components/CreateForm';
-import { TableListItem } from './data.d';
+import { TableListItem, OrganizationDataItem } from './data.d';
 import { queryPersonnel, queryOrganization } from './service';
-
-export interface OrganizationDataItem {
-  orgIndexCode: string;
-  orgNo: string;
-  orgName: string;
-  orgPath: string;
-  parentOrgIndexCode: string;
-  parentOrgName: string;
-  updateTime: string;
-}
-
-export interface OrganizationListData {
-  list: OrganizationDataItem[]
-}
 
 const organizationDataRender = (organizationList: OrganizationDataItem[]): OrganizationDataItem[] =>
   organizationList.map((item) => {
@@ -51,11 +37,12 @@ const TableList: React.FC<{}> = () => {
       // 从服务器获取人员
       let parameters = {
         personName: '',
-        orgIndexCodes: oData[0].orgIndexCode,
+        orgIndexCode: oData[0].orgIndexCode,
         pageNo: 1,
         pageSize: 12,
         isSubOrg: true
       }
+      setCode(oData[0].orgIndexCode)
       queryPersonnel(parameters).then(data => {
         let tableData = data.list
         console.log(tableData)
@@ -70,6 +57,7 @@ const TableList: React.FC<{}> = () => {
   }, []);
 
   const [oData, setOrganizationData] = useState<OrganizationDataItem[]>([]);
+  const [code, setCode] = useState<string>('');
   console.log("----" + typeof(oData), oData)
   const [tableData, setTableData] = useState([]);
   const [sorter, setSorter] = useState<string>('');
@@ -176,7 +164,7 @@ const TableList: React.FC<{}> = () => {
       <div>
         <ul>
           {oData.map(item => (
-            <li key={item.orgName}>
+            <li key={item.orgName} onClick={e => setCode(item.orgIndexCode)}>
               {item.orgName}
             </li>
           ))}
@@ -195,7 +183,7 @@ const TableList: React.FC<{}> = () => {
           }}
           params={{
             personName: '',
-            orgIndexCodes: '123',
+            orgIndexCode: code,
             pageNo: 1,
             pageSize: 12,
             isSubOrg: true
@@ -206,7 +194,7 @@ const TableList: React.FC<{}> = () => {
             <div>
               已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
               <span>
-                服务调用次数总计 {selectedRows.reduce((pre, item) => pre + item.callNo, 0)} 万
+                {/* 服务调用次数总计 {selectedRows.reduce((pre, item) => pre + item.callNo, 0)} 万 */}
               </span>
             </div>
           )}
@@ -223,9 +211,11 @@ const TableList: React.FC<{}> = () => {
           />
         </CreateForm>
       </PageHeaderWrapper>
+
+      {/* <Table columns={columns} dataSource={tableData} /> */}
     </div>
   );
 };
 
-// export default TableList;
-export default connect(({ settings }: ConnectState) => ({ ...settings }))(TableList);
+export default TableList;
+// export default connect(({ settings }: ConnectState) => ({ ...settings }))(TableList);
