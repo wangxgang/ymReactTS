@@ -38,16 +38,16 @@ const TableList: React.FC<{}> = () => {
     //     type: 'user/fetchCurrent',
     //   });
     // }
-    async function getOrganization() {
-      const response = await queryOrganization();
-      setOrganizationData(response);
-    }
-    getOrganization()
+    // async function getOrganization() {
+    //   const response = await queryOrganization();
+    //   setOrganizationData(response);
+    // }
+    // getOrganization()
     // 从服务器获取组织机构
     queryOrganization().then(data => {
       let oData = data
       console.log(oData)
-      setOrganizationData(oData || []);
+      setOrganizationData([...oData] || []);
       // 从服务器获取人员
       let parameters = {
         personName: '',
@@ -62,6 +62,10 @@ const TableList: React.FC<{}> = () => {
         setTableData(tableData || []);
       })
     })
+
+    if(oData.length){
+      debugger
+    }
     
   }, []);
 
@@ -170,13 +174,12 @@ const TableList: React.FC<{}> = () => {
   return (
     <div style={{display: 'flex'}}>
       <div>
-        {typeof(oData) + oData[0]}
         <ul>
-          {
-            oData.map(item => {
-              <li>{item.orgName}</li>
-            })
-          }
+          {oData.map(item => (
+            <li key={item.orgName}>
+              {item.orgName}
+            </li>
+          ))}
         </ul>
       </div>
       <PageHeaderWrapper>

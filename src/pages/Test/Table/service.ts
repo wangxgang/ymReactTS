@@ -33,3 +33,8 @@ export async function updateMovie(params: TableListParams) {
     },
   });
 }
+
+//得到全部组织机构
+export async function queryOrganization() {
+  return request('api/Organization');
+}
