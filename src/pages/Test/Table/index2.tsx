@@ -20,7 +20,7 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { SorterResult } from 'antd/es/table/interface';
 import PersonnelTable, { PersonnelTableColumnProps } from './components/PersonnelTable';
 import { divide } from 'lodash';
-import { PersonnelItem, TableListPagination, TableListParams } from './data.d';
+import { PersonnelItem, TableListPagination, TableListParams } from './data2.d';
 import { Link } from 'umi';
 import { truncateString } from '@/utils/utils';
 
@@ -111,7 +111,7 @@ class Personnel extends Component<PersonnelProps, PersonnelState> {
 
     const filters = Object.keys(filtersArg).reduce((obj, key) => {
       const newObj = { ...obj };
-      newObj[key] = getValue(filtersArg[key]);
+      // newObj[key] = getValue(filtersArg[key]);
       return newObj;
     }, {});
 

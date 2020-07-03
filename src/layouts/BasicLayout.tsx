@@ -138,6 +138,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
   };
   const { formatMessage } = useIntl();
   const [menuData, setMenuData] = useState<MenuDataItem[]>([]);  //从服务器请求菜单：定义menuData
+  console.log(typeof(menuData), menuData)
 
   return (
     <ProLayout
