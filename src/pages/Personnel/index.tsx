@@ -1,5 +1,5 @@
-import { DownOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Divider, Dropdown, Menu, message, Input, Table } from 'antd';
+import { CarryOutOutlined, FormOutlined, UserOutlined, DownOutlined } from '@ant-design/icons';
+import { Button, Divider, Tree, Dropdown, Menu, message, Input, Table } from 'antd';
 import React, { useState, useRef, useEffect } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
@@ -8,32 +8,112 @@ import { Link, useIntl, ConnectProps, connect } from 'umi';
 import { ConnectState } from '@/models/connect';
 
 import CreateForm from './components/CreateForm';
-import { TableListItem, OrganizationDataItem } from './data.d';
+import { TableListItem, OrganizationDataItem, TableListParams } from './data.d';
 import { queryPersonnel, queryOrganization } from './service';
 
 const organizationDataRender = (organizationList: OrganizationDataItem[]): OrganizationDataItem[] =>
   organizationList.map((item) => {
-    debugger
     return item as OrganizationDataItem;
   });
 
+const treeData = [
+  {
+    title: 'parent 1',
+    key: '0-0',
+    icon: <CarryOutOutlined />,
+    children: [
+      {
+        title: 'parent 1-0',
+        key: '0-0-0',
+        icon: <CarryOutOutlined />,
+        children: [
+          { title: 'leaf', key: '0-0-0-0', icon: <CarryOutOutlined /> },
+          { title: 'leaf', key: '0-0-0-1', icon: <CarryOutOutlined /> },
+          { title: 'leaf', key: '0-0-0-2', icon: <CarryOutOutlined /> },
+        ],
+      },
+      {
+        title: 'parent 1-1',
+        key: '0-0-1',
+        icon: <CarryOutOutlined />,
+        children: [{ title: 'leaf', key: '0-0-1-0', icon: <CarryOutOutlined /> }],
+      },
+      {
+        title: 'parent 1-2',
+        key: '0-0-2',
+        icon: <CarryOutOutlined />,
+        children: [
+          { title: 'leaf', key: '0-0-2-0', icon: <CarryOutOutlined /> },
+          {
+            title: 'leaf',
+            key: '0-0-2-1',
+            icon: <CarryOutOutlined />,
+            switcherIcon: <FormOutlined />,
+          },
+        ],
+      },
+    ],
+  },
+];
+
+const columns2 = [
+  {
+    title: '姓名',
+    dataIndex: 'personName',
+  },
+  {
+    title: '性别',
+    dataIndex: 'gender',
+  },
+  {
+    title: '工号',
+    dataIndex: 'jobNo',
+  },
+  {
+    title: '默认组织',
+    dataIndex: 'orgPathName',
+  },
+  {
+    title: '联系电话',
+    dataIndex: 'phoneNo',
+  },
+  {
+    title: '所属组织名称',
+    dataIndex: 'orgName',
+  },
+];
+
+function queryPersonnelList(parameters: TableListParams) {
+  queryPersonnel(parameters).then(data => {
+    let datas: OrganizationDataItem[] = data.list
+    datas.map(item => {
+      item.key = item.orgIndexCode
+    })
+    return datas
+  })
+}
+
 const TableList: React.FC<{}> = () => {
   useEffect(() => {
-    // if (dispatch) {
-    //   dispatch({
-    //     type: 'user/fetchCurrent',
-    //   });
-    // }
-    // async function getOrganization() {
-    //   const response = await queryOrganization();
-    //   setOrganizationData(response);
-    // }
-    // getOrganization()
     // 从服务器获取组织机构
     queryOrganization().then(data => {
-      let oData = data
+      let oData = data, oTreeData = data,  oTreeArray = []
       console.log(oData)
-      setOrganizationData([...oData] || []);
+      organizationDataRender(oTreeData).map(item => {
+        item.title = item.orgName
+        item.key = item.orgIndexCode
+        item.icon = <UserOutlined />
+      })
+      oTreeArray = [
+        {
+          title: 'parent 1-0',
+          key: '0-0-0',
+          icon: <CarryOutOutlined />,
+          children: oTreeData
+        }
+      ]
+      setOrganizationData(oData || []);
+      setOrganizationTreeData(oTreeData || []);
       // 从服务器获取人员
       let parameters = {
         personName: '',
@@ -48,6 +128,7 @@ const TableList: React.FC<{}> = () => {
         console.log(tableData)
         setTableData(tableData || []);
       })
+      // queryPersonnelList(parameters)
     })
 
     if(oData.length){
@@ -57,8 +138,9 @@ const TableList: React.FC<{}> = () => {
   }, []);
 
   const [oData, setOrganizationData] = useState<OrganizationDataItem[]>([]);
+  const [oTreeData, setOrganizationTreeData] = useState<OrganizationDataItem[]>([]);
   const [code, setCode] = useState<string>('');
-  console.log("----" + typeof(oData), oData)
+  console.log("----" + typeof(oData), oData, code)
   const [tableData, setTableData] = useState([]);
   const [sorter, setSorter] = useState<string>('');
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
@@ -159,18 +241,25 @@ const TableList: React.FC<{}> = () => {
       ),
     },
   ];
+
   return (
-    <div style={{display: 'flex'}}>
-      <div>
+    <div style={{display: 'flex', width: '100%'}}>
+      <div className="leftTree">
         <ul>
           {oData.map(item => (
-            <li key={item.orgName} onClick={e => setCode(item.orgIndexCode)}>
+            <li key={item.orgIndexCode} onClick={e => setCode(item.orgIndexCode)}>
               {item.orgName}
             </li>
           ))}
         </ul>
+        <Tree
+          showLine
+          switcherIcon={<DownOutlined />}
+          showIcon
+          treeData={oTreeData}
+        />
       </div>
-      <PageHeaderWrapper>
+      <PageHeaderWrapper style={{flex: '1'}}>
         <ProTable<TableListItem>
           headerTitle="查询表格"
           actionRef={actionRef}
@@ -212,10 +301,9 @@ const TableList: React.FC<{}> = () => {
         </CreateForm>
       </PageHeaderWrapper>
 
-      {/* <Table columns={columns} dataSource={tableData} /> */}
+      {/* <Table columns={columns2} dataSource={tableData} /> */}
     </div>
   );
 };
 
 export default TableList;
-// export default connect(({ settings }: ConnectState) => ({ ...settings }))(TableList);

@@ -37,11 +37,11 @@ export interface TableListData {
 }
 
 export interface TableListParams {
-  sorter?: string;
-  status?: string;
-  name?: string;
-  desc?: string;
-  key?: number;
+  personName?: string;
+  orgIndexCode ?: string;
+  isSubOrg?: boolean;
+  gender?: number;
+  pageNo?: number;
   pageSize?: number;
   currentPage?: number;
 }
@@ -54,4 +54,8 @@ export interface OrganizationDataItem {
   parentOrgIndexCode: string;
   parentOrgName: string;
   updateTime: string;
+  title: string;
+  key: string;
+  icon: any;
+  children: OrganizationDataItem[]
 }
