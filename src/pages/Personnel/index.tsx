@@ -137,6 +137,22 @@ const TableList: React.FC<{}> = () => {
     
   }, []);
 
+  useEffect(() => {
+    // 从服务器获取人员
+    let parameters = {
+      personName: '',
+      orgIndexCode: code,
+      pageNo: 1,
+      pageSize: 12,
+      isSubOrg: true
+    }
+    queryPersonnel(parameters).then(data => {
+      let tableData = data.list
+      console.log(tableData)
+      setTableData(tableData || []);
+    })
+  }, [])
+
   const [oData, setOrganizationData] = useState<OrganizationDataItem[]>([]);
   const [oTreeData, setOrganizationTreeData] = useState<OrganizationDataItem[]>([]);
   const [code, setCode] = useState<string>('');
@@ -242,12 +258,30 @@ const TableList: React.FC<{}> = () => {
     },
   ];
 
+  function getList(v: string) {
+    console.log(v)
+    // 从服务器获取人员
+    let parameters = {
+      personName: '',
+      orgIndexCode: v,
+      pageNo: 1,
+      pageSize: 12,
+      isSubOrg: true
+    }
+    queryPersonnel(parameters).then(data => {
+      let tableData = data.list
+      console.log(tableData)
+      setTableData(tableData || []);
+    })
+  }
+
   return (
     <div style={{display: 'flex', width: '100%'}}>
       <div className="leftTree">
         <ul>
           {oData.map(item => (
-            <li key={item.orgIndexCode} onClick={e => setCode(item.orgIndexCode)}>
+            // <li key={item.orgIndexCode} onClick={e => setCode(item.orgIndexCode)}>
+            <li key={item.orgIndexCode} onClick={e => getList(item.orgIndexCode)}>
               {item.orgName}
             </li>
           ))}
@@ -259,7 +293,7 @@ const TableList: React.FC<{}> = () => {
           treeData={oTreeData}
         />
       </div>
-      <PageHeaderWrapper style={{flex: '1'}}>
+      {/* <PageHeaderWrapper style={{flex: '1'}}>
         <ProTable<TableListItem>
           headerTitle="查询表格"
           actionRef={actionRef}
@@ -283,7 +317,7 @@ const TableList: React.FC<{}> = () => {
             <div>
               已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
               <span>
-                {/* 服务调用次数总计 {selectedRows.reduce((pre, item) => pre + item.callNo, 0)} 万 */}
+                服务调用次数总计 {selectedRows.reduce((pre, item) => pre + item.callNo, 0)} 万
               </span>
             </div>
           )}
@@ -299,9 +333,9 @@ const TableList: React.FC<{}> = () => {
             rowSelection={{}}
           />
         </CreateForm>
-      </PageHeaderWrapper>
+      </PageHeaderWrapper> */}
 
-      {/* <Table columns={columns2} dataSource={tableData} /> */}
+      <Table columns={columns2} dataSource={tableData} />
     </div>
   );
 };
