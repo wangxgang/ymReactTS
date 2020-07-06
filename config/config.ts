@@ -73,7 +73,7 @@ export default defineConfig({
           routes: [
             {
               path: '/',
-              redirect: '/welcome',
+              redirect: '/personnel',
             },
             {
               path: '/welcome',
