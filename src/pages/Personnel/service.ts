@@ -12,3 +12,8 @@ export async function queryPersonnel(params: TableListParams) {
 export async function queryOrganization() {
   return request('api/Organization');
 }
+
+//依据人员ID得到人员基本信息
+export async function queryPersonnelDetails(params: string) {
+  return request(`/api/Person/${params}`);
+}

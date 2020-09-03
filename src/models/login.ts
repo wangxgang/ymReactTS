@@ -62,8 +62,8 @@ const Model: LoginModelType = {
     },
 
     *myLogin({ payload }, { call, put }) {
-      debugger
       const response = yield call(myFakeAccountLogin, payload);
+      debugger
 
       if (response.StatusCode === 200) {
         yield put({
